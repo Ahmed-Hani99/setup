@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//model nurses {
+// id       Int    @id @default(autoincrement())
+// title    String
+// Hospital String
+//phoneNum Float
+// email    String}
+
+model Staff {
+  staID          Int      @id @default(autoincrement())
+  staCPR         BigInt
+  staDateOfBirth DateTime
+  staPassword    String
+  staName        String
+  staGender      Boolean
+  staJob         String
+  staEmail       String
+  staTel         Float
+  staIsAdmin     Boolean
+  Order          Order[]
+}
+
+//model Admin {
+//staff          Staff    @relation(fields: [staffID], references: [staID])
+//staffID        Int      @unique
+//admID          Int      @id @default(autoincrement())
+//admCPR         Float
+//admDateOfBirth DateTime
+//admPassword    String
+//admName        String
+//admEmail       String
+//admGender      Boolean
+//AdmTel         Float}
+
+model Doctor {
+  DocID          Int             @id @default(autoincrement())
+  DocCPR         BigInt
+  DocDateOfBirth DateTime
+  DocPassword    String
+  DocName        String
+  DocGender      Boolean
+  DocEmail       String
+  DocTel         Float
+  DocPicture     String
+  hosClinName    String
+  Prescriptions  Prescriptions[]
+}
+
+model Customer {
+  cusID          Int             @id @default(autoincrement())
+  cusCPR         BigInt
+  cusDateOfBirth DateTime
+  cusEmail       String
+  cusName        String
+  cusGender      Boolean
+  cusStreet      Int
+  cusCity        String
+  cusBlock       Int
+  cusHouse       Int
+  cusPassword    String
+  cusTel         Float
+  Prescriptions  Prescriptions[]
+  Order          Order[]
+  Cart           Cart[]
+}
+
+model Prescriptions {
+  presID                 Int                      @id @default(autoincrement())
+  Customer               Customer                 @relation(fields: [CustomerID], references: [cusID])
+  CustomerID             Int
+  Doctor                 Doctor                   @relation(fields: [DoctorID], references: [DocID])
+  DoctorID               Int
+  PresPicture            String
+  HosClinVisitDate       DateTime
+  PresDateApp            DateTime
+  PresTitle              String
+  PrescriptionsMedicines PrescriptionsMedicines[]
+  Order                  Order?
+
+  //Medicines    Medicines @relation(fields: [MedicineID], references: [medID])
+  //MedicineID   Int
+}
+
+model Medicines {
+  medID                  Int                      @id @default(autoincrement())
+  medName                String
+  medDescription         String
+  medCategory            String
+  medPrice               Int
+  medAvailQuant          Int
+  companyName            String
+  medPicture             String
+  medSpecification       String
+  comments               String
+  PrescriptionsMedicines PrescriptionsMedicines[]
+  OrderMedicines         OrderMedicines[]
+  CartMedicines          CartMedicines[]
+}
+
+model PrescriptionsMedicines {
+  Prescriptions Prescriptions @relation(fields: [PresID], references: [presID])
+  PresID        Int
+  Medicines     Medicines     @relation(fields: [MedID], references: [medID])
+  MedID         Int
+
+  @@id([PresID, MedID])
+}
+
+model Order {
+  OrdID          Int              @id @default(autoincrement())
+  Customer       Customer         @relation(fields: [CustomerID], references: [cusID])
+  CustomerID     Int
+  Staff          Staff            @relation(fields: [StaID], references: [staID])
+  StaID          Int
+  Prescriptions  Prescriptions    @relation(fields: [PresID], references: [presID])
+  PresID         Int              @unique
+  Description    String
+  OrdStatue      String
+  OrdDate        DateTime
+  TotalAmount    Float
+  OrderMedicines OrderMedicines[]
+  Payment        Payment?
+}
+
+model OrderMedicines {
+  Order       Order     @relation(fields: [OrdID], references: [OrdID])
+  OrdID       Int
+  Medicines   Medicines @relation(fields: [MedID], references: [medID])
+  MedID       Int
+  OrdQuantity Int
+
+  @@id([OrdID, MedID])
+}
+
+model Payment {
+  PaymentID   Int      @id @default(autoincrement())
+  Order       Order    @relation(fields: [OrdID], references: [OrdID])
+  OrdID       Int      @unique
+  PaymentDate DateTime
+  PaymentType String
+  PayStatus   String
+}
+
+model Cart {
+  CartID   Int      @id @default(autoincrement())
+  Customer Customer @relation(fields: [CusID], references: [cusID])
+  CusID    Int
+
+  CartMedicines CartMedicines[]
+}
+
+model CartMedicines {
+  Cart      Cart      @relation(fields: [CartID], references: [CartID])
+  CartID    Int
+  Medicines Medicines @relation(fields: [MedID], references: [medID])
+  MedID     Int
+
+  @@id([CartID, MedID])
+}

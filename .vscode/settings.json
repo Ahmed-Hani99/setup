@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3000,
+            "driver": "MySQL",
+            "database": "MYSQL",
+            "password": "//BECJNQ147_La97",
+            "username": "root",
+            "name": "PharmacyDBC"
+        }
+    ]
+}
