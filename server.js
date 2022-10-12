@@ -1,7 +1,8 @@
-import prisma, { Prisma }  from "@prisma/client"
+import  { PrismaClient }  from "@prisma/client"
 import express from "express"
-import {selectAll} from "./date.js"
 
+
+const prisma = new PrismaClient()
 const app = express();
 app.use(express.json());
 app.set('view engine', 'ejs')
@@ -12,15 +13,85 @@ app.get("/", (req, res) => {
 })
 
 
+
+app.get('/api/did', async(req, res, next)=>
+{
+    try
+    {
+        const dID = await prisma.doctor.findMany({
+            where: {dID : 20228066,
+            },
+        })
+        res.json({data: dID})
+        //res.json(dID )
+        console.log(dID)
+    }
+    catch(error){
+        next(error)
+    }
+})
+/*
+const selectAll = (expressRES) =>
+{
+    var con = prisma.$connect;
+    con.$connect((err)=>
+    {
+        if(err)
+        {
+            expressRES.status(400).send({
+                message: "ERROR!",
+            });
+            throw err;
+        }
+        else{
+            const sql = "SELECT * FROM Doctor;";
+            con.prisma(sql,)
+        }
+    })
+}
+
+const selectAll = (expressRes) => {
+  var con = mysql.createConnection(config);
+  con.connect((err) => {
+    if (err) {
+      expressRes.status(400).send({
+        message: "ERROR!!",
+      });
+      throw err;
+    } else {
+      const sql = "SELECT * FROM contacts;";
+      con.query(sql, (err, result) => {
+        if (err) {
+          expressRes.status(400).send({
+            message: "ERROR!!",
+          });
+          throw err;
+        }
+        expressRes.json(result);
+      });
+    }
+  });
+}; */
+
+
+
 async function main()
 {
-    const doctors = await prisma.doctor.findMany(
-        {
-        where: {
-            dID: 20220069,
+     const did = await prisma.doctor.findUnique({
+         where: {dID : 20228066,
             },
-         }); 
-}
+        })
+        console.log(did)
+    }
+
+main()
+.catch(e=>
+    {
+        console.error(e.message)
+    })
+.finally(async() =>{
+    await prisma.$disconnect()
+})
 
 
 //pharmacy with ID

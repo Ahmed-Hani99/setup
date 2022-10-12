@@ -18,17 +18,18 @@ datasource db {
 // email    String}
 
 model Staff {
-  staID          Int      @id @default(autoincrement())
-  staCPR         BigInt
-  staDateOfBirth DateTime
-  staPassword    String
-  staName        String
-  staGender      Boolean
-  staJob         String
-  staEmail       String
-  staTel         Float
-  staIsAdmin     Boolean
-  Order          Order[]
+  staID       Int      @id @default(autoincrement())
+  staCPR      BigInt
+  sDOB        DateTime
+  staPassword String
+  staFName    String
+  staLName    String
+  staGender   String
+  staJob      String
+  staEmail    String
+  staTel      Float
+  staIsAdmin  Boolean
+  Order       Order[]
 }
 
 //model Admin {
@@ -44,42 +45,44 @@ model Staff {
 //AdmTel         Float}
 
 model Doctor {
-  DocID          Int             @id @default(autoincrement())
-  DocCPR         BigInt
-  DocDateOfBirth DateTime
-  DocPassword    String
-  DocName        String
-  DocGender      Boolean
-  DocEmail       String
-  DocTel         Float
-  DocPicture     String
-  hosClinName    String
-  Prescriptions  Prescriptions[]
+  dID           Int             @id @default(autoincrement())
+  dCPR          BigInt
+  dDOB          DateTime        @default(now())
+  dPassword     String
+  dFName        String
+  dFLame        String
+  dGender       String
+  dEmail        String
+  dTel          Float
+  dPicture      String
+  hospitalName  String
+  Prescriptions Prescriptions[]
 }
 
 model Customer {
-  cusID          Int             @id @default(autoincrement())
-  cusCPR         BigInt
-  cusDateOfBirth DateTime
-  cusEmail       String
-  cusName        String
-  cusGender      Boolean
-  cusStreet      Int
-  cusCity        String
-  cusBlock       Int
-  cusHouse       Int
-  cusPassword    String
-  cusTel         Float
-  Prescriptions  Prescriptions[]
-  Order          Order[]
-  Cart           Cart[]
+  cusID         Int             @id @default(autoincrement())
+  cusCPR        BigInt
+  cDOB          DateTime
+  cusEmail      String
+  cusFName      String
+  cusLName      String
+  cusGender     String
+  cusStreet     Int
+  cusCity       String
+  cusBlock      Int
+  cusHouse      Int
+  cusPassword   String
+  cusTel        Float
+  Prescriptions Prescriptions[]
+  Order         Order[]
+  Cart          Cart[]
 }
 
 model Prescriptions {
   presID                 Int                      @id @default(autoincrement())
   Customer               Customer                 @relation(fields: [CustomerID], references: [cusID])
   CustomerID             Int
-  Doctor                 Doctor                   @relation(fields: [DoctorID], references: [DocID])
+  Doctor                 Doctor                   @relation(fields: [DoctorID], references: [dID])
   DoctorID               Int
   PresPicture            String
   HosClinVisitDate       DateTime
@@ -118,53 +121,53 @@ model PrescriptionsMedicines {
 }
 
 model Order {
-  OrdID          Int              @id @default(autoincrement())
-  Customer       Customer         @relation(fields: [CustomerID], references: [cusID])
-  CustomerID     Int
-  Staff          Staff            @relation(fields: [StaID], references: [staID])
-  StaID          Int
-  Prescriptions  Prescriptions    @relation(fields: [PresID], references: [presID])
-  PresID         Int              @unique
-  Description    String
-  OrdStatue      String
-  OrdDate        DateTime
-  TotalAmount    Float
+  ordID          Int              @id @default(autoincrement())
+  customerID     Int
+  staID          Int
+  presID         Int              @unique
+  description    String
+  ordStatue      String
+  ordDate        DateTime
+  totalAmount    Float
   OrderMedicines OrderMedicines[]
   Payment        Payment?
+  Customer       Customer         @relation(fields: [customerID], references: [cusID])
+  Staff          Staff            @relation(fields: [staID], references: [staID])
+  Prescriptions  Prescriptions    @relation(fields: [presID], references: [presID])
 }
 
 model OrderMedicines {
-  Order       Order     @relation(fields: [OrdID], references: [OrdID])
-  OrdID       Int
-  Medicines   Medicines @relation(fields: [MedID], references: [medID])
-  MedID       Int
-  OrdQuantity Int
+  ordID       Int
+  medID       Int
+  ordQuantity Int
+  Order       Order     @relation(fields: [ordID], references: [ordID])
+  Medicines   Medicines @relation(fields: [medID], references: [medID])
 
-  @@id([OrdID, MedID])
+  @@id([ordID, medID])
 }
 
 model Payment {
   PaymentID   Int      @id @default(autoincrement())
-  Order       Order    @relation(fields: [OrdID], references: [OrdID])
-  OrdID       Int      @unique
+  ordID       Int      @unique
   PaymentDate DateTime
   PaymentType String
   PayStatus   String
+  Order       Order    @relation(fields: [ordID], references: [ordID])
 }
 
 model Cart {
-  CartID   Int      @id @default(autoincrement())
-  Customer Customer @relation(fields: [CusID], references: [cusID])
-  CusID    Int
+  CartID Int @id @default(autoincrement())
+  CusID  Int
 
   CartMedicines CartMedicines[]
+  Customer      Customer        @relation(fields: [CusID], references: [cusID])
 }
 
 model CartMedicines {
-  Cart      Cart      @relation(fields: [CartID], references: [CartID])
-  CartID    Int
-  Medicines Medicines @relation(fields: [MedID], references: [medID])
-  MedID     Int
+  cartID    Int
+  medID     Int
+  Cart      Cart      @relation(fields: [cartID], references: [CartID])
+  Medicines Medicines @relation(fields: [medID], references: [medID])
 
-  @@id([CartID, MedID])
+  @@id([cartID, medID])
 }
