@@ -1,35 +1,40 @@
-import  { PrismaClient }  from "@prisma/client"
 import express from "express"
+import  { PrismaClient }  from "@prisma/client"
 
 
 const prisma = new PrismaClient()
 const app = express();
-app.use(express.json());
-app.set('view engine', 'ejs')
 
-app.get("/", (req, res) => {
-    console.log("Here")
-    res.render("index", {text: 'World'})
-})
+//app.use(express.json());
+//app.set('view engine', 'ejs')
 
-
-
-app.get('/api/did', async(req, res, next)=>
+app.get('/api/medID', async(req, res, next)=>
 {
-    try
-    {
-        const dID = await prisma.doctor.findMany({
-            where: {dID : 20228066,
-            },
+        const medID = await prisma.medicines.findMany({
+            where: { medID : 20230222},
         })
-        res.json({data: dID})
-        //res.json(dID )
-        console.log(dID)
-    }
-    catch(error){
-        next(error)
-    }
+        res.json({data:medID}) 
+        console.log(medID)
 })
+
+app.get('/api/dID', async(req, res, next)=>
+{
+        const dID = await prisma.doctor.findMany({
+            where: { dID : 20220919},
+        })
+        res.json({data:dID}) 
+        console.log(dID)
+})
+
+app.get('/api/cusID', async(req, res, next)=>
+{
+        const cusID = await prisma.customer.findMany({
+            where: { cusID : 20210019},
+        })
+        res.json({data:cusID}) 
+        console.log(cusID)
+})
+
 /*
 const selectAll = (expressRES) =>
 {
@@ -75,7 +80,7 @@ const selectAll = (expressRes) => {
 
 
 
-async function main()
+/*async function main()
 {
      const did = await prisma.doctor.findUnique({
          where: {dID : 20228066,
@@ -92,7 +97,7 @@ main()
 .finally(async() =>{
     await prisma.$disconnect()
 })
-
+*/
 
 //pharmacy with ID
 app.get("/api/pharmacies/:id", (req, res)=>

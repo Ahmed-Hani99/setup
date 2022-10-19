@@ -19,8 +19,8 @@ datasource db {
 
 model Staff {
   staID       Int      @id @default(autoincrement())
-  staCPR      BigInt
-  sDOB        DateTime
+  staCPR      Int
+  sDOB        DateTime @default(now())
   staPassword String
   staFName    String
   staLName    String
@@ -46,7 +46,7 @@ model Staff {
 
 model Doctor {
   dID           Int             @id @default(autoincrement())
-  dCPR          BigInt
+  dCPR          Int
   dDOB          DateTime        @default(now())
   dPassword     String
   dFName        String
@@ -62,7 +62,7 @@ model Doctor {
 model Customer {
   cusID         Int             @id @default(autoincrement())
   cusCPR        BigInt
-  cDOB          DateTime
+  cDOB          DateTime        @default(now())
   cusEmail      String
   cusFName      String
   cusLName      String
@@ -80,14 +80,14 @@ model Customer {
 
 model Prescriptions {
   presID                 Int                      @id @default(autoincrement())
-  Customer               Customer                 @relation(fields: [CustomerID], references: [cusID])
-  CustomerID             Int
-  Doctor                 Doctor                   @relation(fields: [DoctorID], references: [dID])
-  DoctorID               Int
-  PresPicture            String
-  HosClinVisitDate       DateTime
-  PresDateApp            DateTime
-  PresTitle              String
+  Customer               Customer                 @relation(fields: [customerID], references: [cusID])
+  customerID             Int
+  Doctor                 Doctor                   @relation(fields: [doctorID], references: [dID])
+  doctorID               Int
+  presPicture            String
+  hosClinVisitDate       DateTime                 @default(now())
+  presDateApp            DateTime                 @default(now())
+  presTitle              String
   PrescriptionsMedicines PrescriptionsMedicines[]
   Order                  Order?
 
@@ -112,12 +112,12 @@ model Medicines {
 }
 
 model PrescriptionsMedicines {
-  Prescriptions Prescriptions @relation(fields: [PresID], references: [presID])
-  PresID        Int
-  Medicines     Medicines     @relation(fields: [MedID], references: [medID])
-  MedID         Int
+  Prescriptions Prescriptions @relation(fields: [presID], references: [presID])
+  presID        Int
+  Medicines     Medicines     @relation(fields: [medID], references: [medID])
+  medID         Int
 
-  @@id([PresID, MedID])
+  @@id([presID, medID])
 }
 
 model Order {
@@ -127,7 +127,7 @@ model Order {
   presID         Int              @unique
   description    String
   ordStatue      String
-  ordDate        DateTime
+  ordDate        DateTime         @default(now())
   totalAmount    Float
   OrderMedicines OrderMedicines[]
   Payment        Payment?
@@ -147,26 +147,26 @@ model OrderMedicines {
 }
 
 model Payment {
-  PaymentID   Int      @id @default(autoincrement())
+  paymentID   Int      @id @default(autoincrement())
   ordID       Int      @unique
-  PaymentDate DateTime
-  PaymentType String
-  PayStatus   String
+  paymentDate DateTime @default(now())
+  paymentType String
+  payStatus   String
   Order       Order    @relation(fields: [ordID], references: [ordID])
 }
 
 model Cart {
-  CartID Int @id @default(autoincrement())
-  CusID  Int
+  cartID Int @id @default(autoincrement())
+  cusID  Int
 
   CartMedicines CartMedicines[]
-  Customer      Customer        @relation(fields: [CusID], references: [cusID])
+  Customer      Customer        @relation(fields: [cusID], references: [cusID])
 }
 
 model CartMedicines {
   cartID    Int
   medID     Int
-  Cart      Cart      @relation(fields: [cartID], references: [CartID])
+  Cart      Cart      @relation(fields: [cartID], references: [cartID])
   Medicines Medicines @relation(fields: [medID], references: [medID])
 
   @@id([cartID, medID])
