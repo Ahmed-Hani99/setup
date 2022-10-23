@@ -107,11 +107,7 @@ app.get("/api/pharmacies/:id", (req, res)=>
     res.send(pharmacy);
 })
 
-//medicines
-app.get("/api/medicines/", (req, res)=>
-{
-    res.send(Medicines)
-})
+
 
 //medicines with ID
 app.get("/api/medicines/:id", (req, res)=>

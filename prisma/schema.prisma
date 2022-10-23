@@ -18,9 +18,9 @@ datasource db {
 // email    String}
 
 model Staff {
-  staID       Int      @id @default(autoincrement())
+  staID       Int     @id @default(autoincrement())
   staCPR      Int
-  sDOB        DateTime @default(now())
+  sDOB        String
   staPassword String
   staFName    String
   staLName    String
@@ -33,21 +33,22 @@ model Staff {
 }
 
 //model Admin {
-//staff          Staff    @relation(fields: [staffID], references: [staID])
 //staffID        Int      @unique
 //admID          Int      @id @default(autoincrement())
 //admCPR         Float
-//admDateOfBirth DateTime
+//admDateOfBirth String
 //admPassword    String
 //admName        String
 //admEmail       String
 //admGender      Boolean
-//AdmTel         Float}
+//AdmTel         Float
+//staff          Staff    @relation(fields: [staffID], references: [staID])
+//}
 
 model Doctor {
   dID           Int             @id @default(autoincrement())
   dCPR          Int
-  dDOB          DateTime        @default(now())
+  dDOB          String
   dPassword     String
   dFName        String
   dFLame        String
@@ -61,8 +62,8 @@ model Doctor {
 
 model Customer {
   cusID         Int             @id @default(autoincrement())
-  cusCPR        BigInt
-  cDOB          DateTime        @default(now())
+  cusCPR        Int
+  cDOB          String
   cusEmail      String
   cusFName      String
   cusLName      String
@@ -85,8 +86,8 @@ model Prescriptions {
   Doctor                 Doctor                   @relation(fields: [doctorID], references: [dID])
   doctorID               Int
   presPicture            String
-  hosClinVisitDate       DateTime                 @default(now())
-  presDateApp            DateTime                 @default(now())
+  hosClinVisitDate       String
+  presDateApp            String
   presTitle              String
   PrescriptionsMedicines PrescriptionsMedicines[]
   Order                  Order?
@@ -127,7 +128,7 @@ model Order {
   presID         Int              @unique
   description    String
   ordStatue      String
-  ordDate        DateTime         @default(now())
+  ordDate        String
   totalAmount    Float
   OrderMedicines OrderMedicines[]
   Payment        Payment?
@@ -147,18 +148,17 @@ model OrderMedicines {
 }
 
 model Payment {
-  paymentID   Int      @id @default(autoincrement())
-  ordID       Int      @unique
-  paymentDate DateTime @default(now())
+  paymentID   Int    @id @default(autoincrement())
+  ordID       Int    @unique
+  paymentDate String
   paymentType String
   payStatus   String
-  Order       Order    @relation(fields: [ordID], references: [ordID])
+  Order       Order  @relation(fields: [ordID], references: [ordID])
 }
 
 model Cart {
-  cartID Int @id @default(autoincrement())
-  cusID  Int
-
+  cartID        Int             @id @default(autoincrement())
+  cusID         Int
   CartMedicines CartMedicines[]
   Customer      Customer        @relation(fields: [cusID], references: [cusID])
 }
